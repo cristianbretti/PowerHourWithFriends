@@ -18,6 +18,8 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 
+import org.w3c.dom.Text;
+
 public class LoginActivity extends Activity implements
         PlayerNotificationCallback, ConnectionStateCallback {
 
@@ -31,7 +33,8 @@ public class LoginActivity extends Activity implements
     // Request code that will be used to verify if the result comes from correct activity
     // Can be any integer
     private static final int REQUEST_CODE = 1337;
-    private Button switchAcc;
+    private Button switchBtn;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,9 @@ public class LoginActivity extends Activity implements
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+
+        switchBtn = (Button) findViewById(R.id.switchBtn);
+
     }
 
     @Override
@@ -113,5 +119,9 @@ public class LoginActivity extends Activity implements
     protected void onDestroy() {
         Spotify.destroyPlayer(this);
         super.onDestroy();
+    }
+
+    public void switchAccount(View view){
+
     }
 }

@@ -3,10 +3,12 @@ package cristianosoriobretti.powerhourwithfriends;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -20,6 +22,15 @@ import com.spotify.sdk.android.player.PlayerState;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class LoginActivity extends Activity implements
         PlayerNotificationCallback, ConnectionStateCallback {
 
@@ -29,53 +40,60 @@ public class LoginActivity extends Activity implements
     private static final String REDIRECT_URI = "power-hour-with-friends-login://callback";
 
     private Player mPlayer;
+    private TextView textView;
+    private String token;
 
     // Request code that will be used to verify if the result comes from correct activity
     // Can be any integer
-    private static final int REQUEST_CODE = 1337;
-    private Button switchBtn;
+    //private static final int REQUEST_CODE = 1337;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        textView = (TextView) findViewById(R.id.textView);
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "streaming"});
+        //builder.setShowDialog(true);
         AuthenticationRequest request = builder.build();
 
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+        AuthenticationClient.openLoginInBrowser(this, request);
 
-        switchBtn = (Button) findViewById(R.id.switchBtn);
 
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
+    protected void onNewIntent(Intent intent) {
+        Log.d("App", "BAJS");
+        super.onNewIntent(intent);
 
-        // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
-                    @Override
-                    public void onInitialized(Player player) {
-                        mPlayer = player;
-                        mPlayer.addConnectionStateCallback(LoginActivity.this);
-                        mPlayer.addPlayerNotificationCallback(LoginActivity.this);
-                        mPlayer.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
-                    }
+        Uri uri = intent.getData();
+        if (uri != null) {
+            AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
 
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    Log.d("App", "TOKEN");
+                    Log.d("TOKEN", response.getAccessToken());
+                    token = response.getAccessToken();
+
+                    break;
+
+                // Auth flow returned an error
+                case ERROR:
+                    // Handle error response
+                    Log.d("App", "ERROR");
+                    break;
+
+                // Most likely auth flow was cancelled
+                default:
+                    // Handle other cases
+                    Log.d("App", "default");
             }
         }
     }
@@ -88,6 +106,7 @@ public class LoginActivity extends Activity implements
     @Override
     public void onLoggedOut() {
         Log.d("MainActivity", "User logged out");
+        System.out.println("Kom hir");
     }
 
     @Override
@@ -121,7 +140,69 @@ public class LoginActivity extends Activity implements
         super.onDestroy();
     }
 
-    public void switchAccount(View view){
+    public void switchAccount(View view) {
+        Intent logOutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://accounts.spotify.com"));
+        startActivity(logOutIntent);
+    }
 
+    public void getInfo(View view) {
+        new JSONTask().execute("https://api.spotify.com/v1/me");
+    }
+
+
+    public class JSONTask extends AsyncTask<String, String, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                Log.d("connectio1", connection.toString());
+
+                connection.setRequestProperty("Authorization", "Bearer" + " " + token);
+                connection.connect();
+                Log.d("connectio2", connection.toString());
+                Integer res = connection.getResponseCode();
+                Log.d("Response Code", res.toString());
+                InputStream stream = connection.getInputStream();
+
+                Log.d("Strem", stream.toString());
+                reader = new BufferedReader(new InputStreamReader(stream));
+
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line);
+                }
+
+                return  buffer.toString();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            textView.setText(result);
+        }
     }
 }

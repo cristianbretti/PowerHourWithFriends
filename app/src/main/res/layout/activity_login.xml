@@ -25,4 +25,15 @@
         android:layout_marginTop="84dp"
         android:onClick="switchAccount" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/getInfobtn"
+        android:layout_below="@+id/switchBtn"
+        android:layout_alignLeft="@+id/switchBtn"
+        android:layout_alignStart="@+id/switchBtn"
+        android:layout_marginTop="44dp"
+        android:onClick="getInfo" />
+
 </RelativeLayout>

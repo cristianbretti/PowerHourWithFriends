@@ -7,10 +7,14 @@ import java.util.ArrayList;
  */
 public class Playlist {
     String id;
+    String name;
     ArrayList<Track> list;
+   // ArrayList<Track> list;
 
-    public Playlist (){
-
+    public Playlist (String id, String name, ArrayList<Track> list){
+        this.id = id;
+        this.name = name;
+        this.list = list;
     }
 
     public String getId() {
@@ -19,6 +23,14 @@ public class Playlist {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ArrayList<Track> getList() {

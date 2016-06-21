@@ -1,5 +1,7 @@
 package cristianosoriobretti.powerhourwithfriends;
 
+import android.media.session.MediaSession;
+
 import java.util.ArrayList;
 
 /**
@@ -7,13 +9,14 @@ import java.util.ArrayList;
  */
 public class User {
 
-
     String userName;
     String authCode;
     ArrayList <Playlist> listOfPlaylists;
 
-    public User(){
-
+    public User(String userName, String authCode, ArrayList<Playlist> listOfPlaylists){
+        this.userName = userName;
+        this.authCode = authCode;
+        this.listOfPlaylists = listOfPlaylists;
     }
 
     public String getUserName() {

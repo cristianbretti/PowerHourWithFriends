@@ -128,16 +128,30 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
     private void populateSrollView(){
         ArrayList<Playlist> list = user.getListOfPlaylists();
-        for(Playlist current : list){
-            String nameOfPlaylist = current.getName();
-            TextView view = new TextView(this);
+        for(int i = 0; i < list.size(); i++){
+            String nameOfPlaylist = list.get(i).getName();
+            final TextView view = new TextView(this);
+            view.setId(i);
             view.setText(nameOfPlaylist);
+            //Set the correct layout
             LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             llp.setMargins(0,22,0,22);
             view.setLayoutParams(llp);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(LoginActivity.this, PlayActivity.class);
+
+                    int id = view.getId();
+                    intent.putExtra("user", user);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
+                }
+            });
             layoutPlaylist.addView(view);
+
         }
     }
 }

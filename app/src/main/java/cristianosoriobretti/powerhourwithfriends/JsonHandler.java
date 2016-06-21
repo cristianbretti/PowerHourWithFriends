@@ -3,6 +3,9 @@ package cristianosoriobretti.powerhourwithfriends;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +22,20 @@ public class JsonHandler {
     private String resultString;
     private final String userURL = "https://api.spotify.com/v1/me";
 
-    public String createUser(String oAuthCode){
+    public User createUser(String oAuthCode){
+        String json = getUserJSONString(oAuthCode);
+
+        try {
+            JSONObject reader = new JSONObject(json);
+            String test = reader.getString("display_name");
+            Log.d("NAME", test);
+        } catch (JSONException e){
+            Log.d("JSONException", e.getMessage());
+        }
+        return new User();
+    }
+
+    private String getUserJSONString(String oAuthCode){
 
         try {
            return new JSONTask().execute(userURL, oAuthCode).get();

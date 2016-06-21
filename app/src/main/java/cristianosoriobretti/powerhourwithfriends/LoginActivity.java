@@ -124,7 +124,6 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
     public void getInfo(View view) {
         JsonHandler handler = new JsonHandler();
-        String temp = handler.createUser(token);
-        Log.d("NFKALENFAKLR", temp);
+        User temp = handler.createUser(token);
     }
 }

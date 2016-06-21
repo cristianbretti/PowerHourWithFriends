@@ -1,11 +1,12 @@
 package cristianosoriobretti.powerhourwithfriends;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Cristian on 2016-06-21.
  */
-public class Playlist {
+public class Playlist implements Serializable {
     String id;
     String name;
     ArrayList<Track> list;

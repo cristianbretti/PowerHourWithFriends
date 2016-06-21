@@ -1,9 +1,11 @@
 package cristianosoriobretti.powerhourwithfriends;
 
+import java.io.Serializable;
+
 /**
  * Created by Cristian on 2016-06-21.
  */
-public class Track {
+public class Track implements Serializable{
     String name;
     String uri;
 

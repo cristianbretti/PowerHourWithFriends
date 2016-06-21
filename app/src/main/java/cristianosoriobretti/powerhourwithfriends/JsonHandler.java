@@ -3,6 +3,7 @@ package cristianosoriobretti.powerhourwithfriends;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -21,24 +23,82 @@ import java.util.concurrent.ExecutionException;
 public class JsonHandler {
     private String resultString;
     private final String userURL = "https://api.spotify.com/v1/me";
+    private final String playlistsURL = "https://api.spotify.com/v1/users/";
 
     public User createUser(String oAuthCode){
-        String json = getUserJSONString(oAuthCode);
+        String userJSON = getUserJSONString(oAuthCode);
 
         try {
-            JSONObject reader = new JSONObject(json);
-            String test = reader.getString("display_name");
-            Log.d("NAME", test);
+            //Get the user info
+            JSONObject jsonUser = new JSONObject(userJSON);
+            String userName = jsonUser.getString("display_name");
+            String userID = jsonUser.getString("id");
+
+            //Get the playlist info of the user
+            String playlistsJSON = getPlaylistsJSONString(oAuthCode, userID); //json-text
+            JSONObject jsonPlaylists = new JSONObject(playlistsJSON);
+            JSONArray listOfPlaylistObjects = jsonPlaylists.getJSONArray("items");
+            ArrayList<Playlist> listOfPlaylists = new ArrayList<>();
+            for (int i = 0; i < listOfPlaylistObjects.length(); i++){
+                JSONObject current = listOfPlaylistObjects.getJSONObject(i);
+                String playlistName = current.getString("name");
+                String playlistID = current.getString("id");
+                //Get the info from the current playlist
+                String playlistJSON = getPlaylistJSONString(oAuthCode, userID, playlistID);
+                JSONObject jsonPlaylist = new JSONObject(playlistJSON);
+                JSONArray listOfTrackObjects = jsonPlaylist.getJSONArray("items");
+                ArrayList<Track> listOfTracks = new ArrayList<>();
+                for (int j = 0; j < listOfTrackObjects.length(); j++){
+                    JSONObject currentItem = listOfTrackObjects.getJSONObject(j);
+                    JSONObject currentTrack = currentItem.getJSONObject("track");
+                    String trackName = currentTrack.getString("name");
+                    String trackURI = currentTrack.getString("uri");
+
+                    Track track = new Track(trackName, trackURI);
+                    listOfTracks.add(track);
+
+                }
+                //TODO spara playlists object
+                Playlist playlist = new Playlist(playlistID, playlistName, listOfTracks);
+                listOfPlaylists.add(playlist);
+            }
+            //TODO skapa user object med playlist i sig
+            User currentUser = new User(userName, oAuthCode, listOfPlaylists);
+            return currentUser;
+
         } catch (JSONException e){
             Log.d("JSONException", e.getMessage());
         }
-        return new User();
+        return null;
+    }
+
+    private String getPlaylistJSONString(String oAuthCode, String userID, String playlistID){
+        try {
+            String url = playlistsURL + userID + "/playlists/" + playlistID + "/tracks";
+            return new JSONTask().execute(url, oAuthCode).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return "Funkar EJ";
     }
 
     private String getUserJSONString(String oAuthCode){
-
         try {
            return new JSONTask().execute(userURL, oAuthCode).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return "Funkar EJ";
+    }
+
+    private String getPlaylistsJSONString(String oAuthCode, String userID){
+        try {
+            String url = playlistsURL + userID +"/playlists";
+            return new JSONTask().execute(url, oAuthCode).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

@@ -31,8 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class LoginActivity extends Activity implements
-        PlayerNotificationCallback, ConnectionStateCallback {
+public class LoginActivity extends Activity implements ConnectionStateCallback {
 
 
     private static final String CLIENT_ID = "dc83b9c7f6ab47c299c90a43edc62d18";
@@ -110,28 +109,12 @@ public class LoginActivity extends Activity implements
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+
     }
 
     @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
+    public void onConnectionMessage(String s) {
 
-    @Override
-    public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-        Log.d("MainActivity", "Playback event received: " + eventType.name());
-    }
-
-    @Override
-    public void onPlaybackError(ErrorType errorType, String errorDetails) {
-        Log.d("MainActivity", "Playback error received: " + errorType.name());
-    }
-
-    @Override
-    protected void onDestroy() {
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
     }
 
     public void switchAccount(View view) {
@@ -140,63 +123,8 @@ public class LoginActivity extends Activity implements
     }
 
     public void getInfo(View view) {
-        new JSONTask().execute("https://api.spotify.com/v1/me");
-    }
-
-
-    public class JSONTask extends AsyncTask<String, String, String> {
-
-
-        @Override
-        protected String doInBackground(String... params) {
-            HttpURLConnection connection = null;
-            BufferedReader reader = null;
-            try {
-                URL url = new URL(params[0]);
-                connection = (HttpURLConnection) url.openConnection();
-                Log.d("connectio1", connection.toString());
-
-                connection.setRequestProperty("Authorization", "Bearer" + " " + token);
-                connection.connect();
-                Log.d("connectio2", connection.toString());
-                Integer res = connection.getResponseCode();
-                Log.d("Response Code", res.toString());
-                InputStream stream = connection.getInputStream();
-
-                Log.d("Strem", stream.toString());
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-                String line = "";
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line);
-                }
-
-                return  buffer.toString();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-                try {
-                    if (reader != null) {
-                        reader.close();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            textView.setText(result);
-        }
+        JsonHandler handler = new JsonHandler();
+        String temp = handler.createUser(token);
+        Log.d("NFKALENFAKLR", temp);
     }
 }

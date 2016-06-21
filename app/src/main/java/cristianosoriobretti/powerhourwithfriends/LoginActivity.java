@@ -34,18 +34,13 @@ import java.net.URL;
 public class LoginActivity extends Activity implements
         PlayerNotificationCallback, ConnectionStateCallback {
 
-    // TODO: Replace with your client ID
+
     private static final String CLIENT_ID = "dc83b9c7f6ab47c299c90a43edc62d18";
-    // TODO: Replace with your redirect URI
     private static final String REDIRECT_URI = "power-hour-with-friends-login://callback";
 
     private Player mPlayer;
     private TextView textView;
     private String token;
-
-    // Request code that will be used to verify if the result comes from correct activity
-    // Can be any integer
-    //private static final int REQUEST_CODE = 1337;
 
 
     @Override
@@ -58,7 +53,6 @@ public class LoginActivity extends Activity implements
                 AuthenticationResponse.Type.TOKEN,
                 REDIRECT_URI);
         builder.setScopes(new String[]{"user-read-private", "streaming"});
-        //builder.setShowDialog(true);
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginInBrowser(this, request);

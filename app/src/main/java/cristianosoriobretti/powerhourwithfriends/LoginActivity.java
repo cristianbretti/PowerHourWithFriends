@@ -1,5 +1,6 @@
 package cristianosoriobretti.powerhourwithfriends;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,7 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -30,6 +33,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class LoginActivity extends Activity implements ConnectionStateCallback {
 
@@ -37,16 +41,17 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
     private static final String CLIENT_ID = "dc83b9c7f6ab47c299c90a43edc62d18";
     private static final String REDIRECT_URI = "power-hour-with-friends-login://callback";
 
-    private Player mPlayer;
-    private TextView textView;
+    private TextView textViewUser;
     private String token;
-
+    private User user;
+    private LinearLayout layoutPlaylist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        textView = (TextView) findViewById(R.id.textView);
+        textViewUser = (TextView) findViewById(R.id.textViewUser);
+        layoutPlaylist = (LinearLayout) findViewById(R.id.layoutPlaylist);
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
@@ -74,7 +79,11 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     Log.d("App", "TOKEN");
                     Log.d("TOKEN", response.getAccessToken());
                     token = response.getAccessToken();
-
+                    JsonHandler handler = new JsonHandler();
+                    user = handler.createUser(token);
+                    textViewUser.setText(user.getUserName());
+                    populateSrollView();
+                    //TODO: Add token to user
                     break;
 
                 // Auth flow returned an error
@@ -117,13 +126,18 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
     }
 
-    public void switchAccount(View view) {
-        Intent logOutIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://accounts.spotify.com"));
-        startActivity(logOutIntent);
-    }
-
-    public void getInfo(View view) {
-        JsonHandler handler = new JsonHandler();
-        User temp = handler.createUser(token);
+    private void populateSrollView(){
+        ArrayList<Playlist> list = user.getListOfPlaylists();
+        for(Playlist current : list){
+            String nameOfPlaylist = current.getName();
+            TextView view = new TextView(this);
+            view.setText(nameOfPlaylist);
+            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            llp.setMargins(0,22,0,22);
+            view.setLayoutParams(llp);
+            layoutPlaylist.addView(view);
+        }
     }
 }

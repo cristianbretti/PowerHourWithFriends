@@ -136,6 +136,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             llp.setMargins(0,22,0,22);
             view.setLayoutParams(llp);
+            view.setTextSize(35);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

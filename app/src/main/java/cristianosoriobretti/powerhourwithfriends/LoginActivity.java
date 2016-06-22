@@ -66,7 +66,6 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.d("App", "BAJS");
         super.onNewIntent(intent);
 
         Uri uri = intent.getData();
@@ -77,13 +76,11 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                 // Response was successful and contains auth token
                 case TOKEN:
                     Log.d("App", "TOKEN");
-                    Log.d("TOKEN", response.getAccessToken());
                     token = response.getAccessToken();
                     JsonHandler handler = new JsonHandler();
                     user = handler.createUser(token);
                     textViewUser.setText(user.getUserName());
                     populateSrollView();
-                    //TODO: Add token to user
                     break;
 
                 // Auth flow returned an error

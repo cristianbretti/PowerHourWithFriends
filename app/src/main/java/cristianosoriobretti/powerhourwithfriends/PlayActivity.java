@@ -31,12 +31,13 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     long timeLeftOfSong;
     long startTime;
     int timesStarted;
+    final int standartTime = 60000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-        timeLeftOfSong = 20000; //Time in milliseconds
+        timeLeftOfSong = standartTime; //Time in milliseconds
         timesStarted = 0;
 
         TextView textView = (TextView) findViewById(R.id.textView);
@@ -71,12 +72,15 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 mPlayer.addConnectionStateCallback(PlayActivity.this);
                 mPlayer.addPlayerNotificationCallback(PlayActivity.this);
                 mPlayer.play(playlist.getList().get(0).getUri());
+                for (Track current : playlist.getList()){
+                    mPlayer.queue(current.getUri());
+                }
                 Log.d("Player", "Playing for first time");
                 startTime = System.currentTimeMillis();
                 timesStarted ++;
                 Log.d("Start time now", "" + startTime);
 
-               // sleep.start();
+                // sleep.start();
                 run();
             }
 
@@ -123,24 +127,27 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
     public void pauseClick (View view){
         long elapsedTime = System.currentTimeMillis() - startTime;
-        Log.d("diff", "" + elapsedTime);
         timeLeftOfSong -= elapsedTime;
         mPlayer.pause();
         timesStarted++;
-        Log.d("Player", "Pausing");
+        Log.d("PAUSE", "Elapsed time before pause: " + elapsedTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
     }
 
     public void playClick (View view){
         mPlayer.resume();
-        Log.d("Player", "Resuming");
         startTime = System.currentTimeMillis();
+        Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
         run();
     }
 
     public void nextSong(int check){
         if (check == timesStarted){
-            Log.d("Thread", "Changing song");
-            mPlayer.shutdown();
+            mPlayer.skipToNext();
+            timeLeftOfSong = standartTime;
+            timesStarted = 1;
+            startTime = System.currentTimeMillis();
+            Log.d("NEXT SONG", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
+            run();
         }
     }
 
@@ -151,7 +158,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             @Override
             public void run() {
                 nextSong(hold);
-                Log.d("Thread", "Done with run");
+                Log.d("Thread", "Done with run, times started: " + hold);
             }
         }, timeLeftOfSong);
     }

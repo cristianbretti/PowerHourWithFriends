@@ -25,13 +25,19 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     private Player mPlayer;
     private User user;
     private Playlist playlist;
-    SleepRunnable sleep;
-    Timer timer;
 
+    TextView textView;
+
+    Timer timer;
     long timeLeftOfSong;
     long startTime;
     int timesStarted;
     final int standartTime = 60000;
+
+    String prevSong;
+    String currentSong;
+    String nextSong;
+    int songNumber;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +46,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         timeLeftOfSong = standartTime; //Time in milliseconds
         timesStarted = 0;
 
-        TextView textView = (TextView) findViewById(R.id.textView);
-        sleep = new SleepRunnable();
+        textView = (TextView) findViewById(R.id.textView);
         timer = new Timer();
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
@@ -78,9 +83,9 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 Log.d("Player", "Playing for first time");
                 startTime = System.currentTimeMillis();
                 timesStarted ++;
+                songNumber = 0;
                 Log.d("Start time now", "" + startTime);
-
-                // sleep.start();
+                writeSongsToScreen();
                 run();
             }
 
@@ -146,9 +151,24 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             timeLeftOfSong = standartTime;
             timesStarted = 1;
             startTime = System.currentTimeMillis();
+            songNumber ++;
+            //TODO: Fix so it doesn't crash here
+            //writeSongsToScreen();
             Log.d("NEXT SONG", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
             run();
         }
+    }
+
+
+    private void writeSongsToScreen(){
+        if(songNumber - 1 > 0){
+            prevSong = playlist.getList().get(songNumber-1).getName();
+        }
+
+        currentSong = playlist.getList().get(songNumber).getName();
+        nextSong = playlist.getList().get(songNumber + 1).getName();
+
+        textView.setText("prev: "+ prevSong + "\n" + "current: " + currentSong + "\n" + "next: " + nextSong);
     }
 
     @Override

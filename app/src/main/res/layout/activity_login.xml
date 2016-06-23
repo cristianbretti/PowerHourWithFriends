@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:id="@+id/header"
-        android:background="#001eff"
+        android:background="#333333"
         android:layout_alignParentTop="true">
 
         <TextView
@@ -25,14 +25,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView"
-        android:layout_below="@id/header">
+        android:layout_below="@id/header"
+        android:background="#232323">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:id="@+id/layoutPlaylist"></LinearLayout>
+            android:gravity="left"
+            android:id="@+id/layoutPlaylist">
+
+        </LinearLayout>
     </ScrollView>
 
 </RelativeLayout>

@@ -186,7 +186,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                     public void onFinish() {
                         countDownText.setText("Shot!");
                         betweenSongs = true;
-                        vib.vibrate(new long[]{0,500, 100, 1000, 100, 500},-1);
+                        vib.vibrate(3000);
                         mPlayer.skipToNext();
                         //TODO: Start song after x seconds
                        // mPlayer.pause();

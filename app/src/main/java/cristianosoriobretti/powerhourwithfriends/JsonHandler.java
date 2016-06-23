@@ -26,6 +26,7 @@ public class JsonHandler {
     private final String playlistsURL = "https://api.spotify.com/v1/users/";
 
     public User createUser(String oAuthCode){
+        Log.d("Ceateduser token is :", oAuthCode);
         String userJSON = getUserJSONString(oAuthCode);
 
         try {

@@ -2,15 +2,21 @@ package cristianosoriobretti.powerhourwithfriends;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Layout;
+import android.util.LayoutDirection;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -27,6 +33,9 @@ import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -52,6 +61,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
         setContentView(R.layout.activity_login);
         textViewUser = (TextView) findViewById(R.id.textViewUser);
         layoutPlaylist = (LinearLayout) findViewById(R.id.layoutPlaylist);
+        layoutPlaylist.setGravity(Gravity.LEFT);
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
@@ -60,7 +70,6 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginInBrowser(this, request);
-
 
     }
 
@@ -131,12 +140,14 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             view.setId(i);
             view.setText(nameOfPlaylist);
             //Set the correct layout
-            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(
+            RelativeLayout.LayoutParams llp = new RelativeLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             llp.setMargins(0,22,0,22);
             view.setLayoutParams(llp);
-            view.setTextSize(35);
+            view.setTextSize(30);
+            view.setTextColor(Color.WHITE);
+            view.setPadding(22,22,22,22);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

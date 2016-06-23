@@ -31,12 +31,12 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     long startTime;
     int timesStarted;
     boolean paused;
-    final int standartTime = 20000;
+    final int standartTime = 3000;
 
-    String prevSong;
     String currentSong;
-    String nextSong;
     int songNumber;
+
+    int numberOfSongs = 5;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,18 +75,21 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 mPlayer = player;
                 mPlayer.addConnectionStateCallback(PlayActivity.this);
                 mPlayer.addPlayerNotificationCallback(PlayActivity.this);
-                mPlayer.play(playlist.getList().get(0).getUri());
-                for (int i = 0; i < playlist.getList().size(); i++){
-                    mPlayer.queue(playlist.getList().get(i).getUri());
+                //mPlayer.play(playlist.getList().get(0).getUri());
+                for(int j = 0; j < numberOfSongs;){
+                    for (int i = 0; i < playlist.getList().size() && j < numberOfSongs; i++){
+                        mPlayer.queue(playlist.getList().get(i).getUri());
+                        j++;
+                    }
                 }
-                Log.d("Player", "Started the Music");
-                startTime = System.currentTimeMillis();
+
+                Log.d("Player", "Added all to queueu");
+                mPlayer.pause();
                 timesStarted ++;
                 songNumber = 0;
-                paused = false;
+                paused = true;
                 Log.d("Start time now", "" + startTime);
                 writeSongsToScreen();
-                createTimer();
             }
 
             @Override
@@ -172,10 +175,10 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             @Override
             public void run() {
 
-                currentSong = playlist.getList().get(songNumber).getName();
-
-                textView.setText("current: " + currentSong);
-
+                if(songNumber < numberOfSongs){
+                    currentSong = playlist.getList().get(songNumber).getName();
+                    textView.setText("current: " + currentSong);
+                }
             }
         });
     }

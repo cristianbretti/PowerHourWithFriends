@@ -1,7 +1,9 @@
 package cristianosoriobretti.powerhourwithfriends;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,17 +37,21 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     long startTime;
     boolean paused;
     boolean betweenSongs;
-    final int standartTime = 10000;
+
+    Vibrator vib;
 
     String currentSong;
     int songNumber;
 
     int numberOfSongs = 5;
+    final int standartTime = 10000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
         timer = new Timer();
+        vib = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
 
         timeLeftOfSong = standartTime; //Time in millisecond
 
@@ -180,6 +186,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                     public void onFinish() {
                         countDownText.setText("Shot!");
                         betweenSongs = true;
+                        vib.vibrate(500);
                         mPlayer.skipToNext();
                         //TODO: Start song after x seconds
                        // mPlayer.pause();

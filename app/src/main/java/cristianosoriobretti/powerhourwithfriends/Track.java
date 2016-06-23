@@ -7,10 +7,12 @@ import java.io.Serializable;
  */
 public class Track implements Serializable{
     String name;
+    String artist;
     String uri;
 
-    public Track(String name, String uri){
+    public Track(String name, String artist, String uri){
         this.name = name;
+        this.artist = artist;
         this.uri = uri;
     }
 
@@ -28,5 +30,13 @@ public class Track implements Serializable{
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
 }

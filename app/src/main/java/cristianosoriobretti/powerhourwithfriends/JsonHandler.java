@@ -54,8 +54,11 @@ public class JsonHandler {
                     JSONObject currentTrack = currentItem.getJSONObject("track");
                     String trackName = currentTrack.getString("name");
                     String trackURI = currentTrack.getString("uri");
+                    JSONArray artists = currentTrack.getJSONArray("artists");
+                    JSONObject art = artists.getJSONObject(0);
+                    String trackArtist = art.getString("name");
 
-                    Track track = new Track(trackName, trackURI);
+                    Track track = new Track(trackName, trackArtist, trackURI);
                     listOfTracks.add(track);
 
                 }

@@ -227,7 +227,8 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
                 if(songNumber < numberOfSongs){
                     currentSong = playlist.getList().get(songNumber).getName();
-                    textView.setText("current: " + currentSong);
+                    String artist = playlist.getList().get(songNumber).getArtist();
+                    textView.setText("Now playing: " + currentSong + " by " + artist);
                     songsLeftText.setText("Shots left: " + (numberOfSongs - songNumber));
                 }
             }

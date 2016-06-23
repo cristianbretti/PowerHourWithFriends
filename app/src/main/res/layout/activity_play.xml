@@ -7,27 +7,32 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:background="#232323">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Text"
             android:id="@+id/textView"
+            android:layout_marginTop="60dp"
+            android:textSize="30dp"
             android:layout_alignParentTop="true"
-            android:layout_alignLeft="@+id/playButton"
-            android:layout_alignStart="@+id/playButton"
-            android:layout_marginTop="73dp" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textColor="#ffffff" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pause"
             android:id="@+id/pauseButton"
-            android:layout_below="@+id/textView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="107dp"
-            android:onClick="pauseClick" />
+            android:onClick="pauseClick"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/songLeftText"
+            android:layout_alignEnd="@+id/songLeftText"
+            android:background="#23cb71" />
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -35,9 +40,11 @@
             android:layout_height="wrap_content"
             android:text="Play"
             android:id="@+id/playButton"
+            android:onClick="playClick"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:onClick="playClick" />
+            android:layout_alignLeft="@+id/songLeftText"
+            android:layout_alignStart="@+id/songLeftText"
+            android:background="#139b2c" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,8 +52,11 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
             android:id="@+id/songLeftText"
-            android:layout_above="@+id/playButton"
-            android:layout_centerHorizontal="true" />
+            android:textSize="30dp"
+            android:layout_below="@+id/countDownText"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="42dp"
+            android:textColor="#ffffff" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,7 +64,9 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Medium Text"
             android:id="@+id/countDownText"
-            android:layout_below="@+id/pauseButton"
-            android:layout_centerHorizontal="true" />
+            android:textSize="50dp"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="#ffffff" />
     </RelativeLayout>
 </RelativeLayout>

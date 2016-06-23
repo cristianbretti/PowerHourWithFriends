@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -189,6 +190,15 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             layoutPlaylist.addView(arrow);
 
             layoutRow.addView(layoutPlaylist);
+            ImageView line = new ImageView(this);
+            line.setImageResource(R.drawable.line);
+            LinearLayout.LayoutParams imagellp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            line.setLayoutParams(imagellp);
+            line.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            layoutRow.addView(line);
         }
     }
 }

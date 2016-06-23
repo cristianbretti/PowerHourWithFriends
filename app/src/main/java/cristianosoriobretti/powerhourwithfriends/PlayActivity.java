@@ -12,12 +12,10 @@ import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
-import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Spotify;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CountDownLatch;
 
 public class PlayActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback, Runnable{
 
@@ -32,7 +30,8 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     long timeLeftOfSong;
     long startTime;
     int timesStarted;
-    final int standartTime = 60000;
+    boolean paused;
+    final int standartTime = 20000;
 
     String prevSong;
     String currentSong;
@@ -77,16 +76,17 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 mPlayer.addConnectionStateCallback(PlayActivity.this);
                 mPlayer.addPlayerNotificationCallback(PlayActivity.this);
                 mPlayer.play(playlist.getList().get(0).getUri());
-                for (Track current : playlist.getList()){
-                    mPlayer.queue(current.getUri());
+                for (int i = 0; i < playlist.getList().size(); i++){
+                    mPlayer.queue(playlist.getList().get(i).getUri());
                 }
-                Log.d("Player", "Playing for first time");
+                Log.d("Player", "Started the Music");
                 startTime = System.currentTimeMillis();
                 timesStarted ++;
                 songNumber = 0;
+                paused = false;
                 Log.d("Start time now", "" + startTime);
                 writeSongsToScreen();
-                run();
+                createTimer();
             }
 
             @Override
@@ -131,18 +131,24 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     }
 
     public void pauseClick (View view){
-        long elapsedTime = System.currentTimeMillis() - startTime;
-        timeLeftOfSong -= elapsedTime;
-        mPlayer.pause();
-        timesStarted++;
-        Log.d("PAUSE", "Elapsed time before pause: " + elapsedTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
+        if(!paused){
+            paused = true;
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            timeLeftOfSong -= elapsedTime;
+            mPlayer.pause();
+            timesStarted++;
+            Log.d("PAUSE", "Elapsed time before pause: " + elapsedTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
+        }
     }
 
     public void playClick (View view){
-        mPlayer.resume();
-        startTime = System.currentTimeMillis();
-        Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
-        run();
+        if(paused){
+            paused = false;
+            mPlayer.resume();
+            startTime = System.currentTimeMillis();
+            Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
+            createTimer();
+        }
     }
 
     public void nextSong(int check){
@@ -153,33 +159,41 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             startTime = System.currentTimeMillis();
             songNumber ++;
             //TODO: Fix so it doesn't crash here
-            //writeSongsToScreen();
+            writeSongsToScreen();
+            //PlayActivity.this.runOnUiThread();
             Log.d("NEXT SONG", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
-            run();
+            createTimer();
         }
     }
 
 
     private void writeSongsToScreen(){
-        if(songNumber - 1 > 0){
-            prevSong = playlist.getList().get(songNumber-1).getName();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
-        currentSong = playlist.getList().get(songNumber).getName();
-        nextSong = playlist.getList().get(songNumber + 1).getName();
+                currentSong = playlist.getList().get(songNumber).getName();
 
-        textView.setText("prev: "+ prevSong + "\n" + "current: " + currentSong + "\n" + "next: " + nextSong);
+                textView.setText("current: " + currentSong);
+
+            }
+        });
     }
-
-    @Override
-    public void run() {
+    
+    public void createTimer() {
         final int hold = timesStarted;
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 nextSong(hold);
-                Log.d("Thread", "Done with run, times started: " + hold);
+                Log.d("Thread", "Done with timer, times started: " + hold);
             }
         }, timeLeftOfSong);
+    }
+
+    @Override
+    public void run() {
+        //Nothing yet
     }
 }

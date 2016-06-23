@@ -1,6 +1,7 @@
 package cristianosoriobretti.powerhourwithfriends;
 
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,13 +26,16 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     private Playlist playlist;
 
     TextView textView;
+    TextView songsLeftText;
+    TextView countDownText;
 
+    CountDownTimer countdown;
     Timer timer;
     long timeLeftOfSong;
     long startTime;
-    int timesStarted;
     boolean paused;
-    final int standartTime = 3000;
+    boolean betweenSongs;
+    final int standartTime = 10000;
 
     String currentSong;
     int songNumber;
@@ -41,12 +45,14 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
+        timer = new Timer();
 
-        timeLeftOfSong = standartTime; //Time in milliseconds
-        timesStarted = 0;
+        timeLeftOfSong = standartTime; //Time in millisecond
 
         textView = (TextView) findViewById(R.id.textView);
-        timer = new Timer();
+        songsLeftText = (TextView) findViewById(R.id.songLeftText);
+        countDownText = (TextView) findViewById(R.id.countDownText);
+
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
         int i = intent.getIntExtra("id", 0);
@@ -79,13 +85,14 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 for(int j = 0; j < numberOfSongs;){
                     for (int i = 0; i < playlist.getList().size() && j < numberOfSongs; i++){
                         mPlayer.queue(playlist.getList().get(i).getUri());
+                        mPlayer.queue("spotify:track:3FS2e59gXFXrcg7sN2mL5z");
                         j++;
                     }
                 }
 
                 Log.d("Player", "Added all to queueu");
                 mPlayer.pause();
-                timesStarted ++;
+
                 songNumber = 0;
                 paused = true;
                 Log.d("Start time now", "" + startTime);
@@ -134,12 +141,14 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     }
 
     public void pauseClick (View view){
-        if(!paused){
+        if(!paused && !betweenSongs){
             paused = true;
             long elapsedTime = System.currentTimeMillis() - startTime;
             timeLeftOfSong -= elapsedTime;
             mPlayer.pause();
-            timesStarted++;
+
+            countdown.cancel();
+
             Log.d("PAUSE", "Elapsed time before pause: " + elapsedTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
         }
     }
@@ -150,22 +159,56 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             mPlayer.resume();
             startTime = System.currentTimeMillis();
             Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
-            createTimer();
+            startCountDown();
         }
     }
 
-    public void nextSong(int check){
-        if (check == timesStarted){
+    private void startCountDown() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (countdown != null){
+                    countdown.cancel();
+                }
+                countdown = new CountDownTimer(timeLeftOfSong, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        countDownText.setText("" + millisUntilFinished/1000);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        countDownText.setText("Shot!");
+                        betweenSongs = true;
+                        mPlayer.skipToNext();
+                        //TODO: Start song after x seconds
+                       // mPlayer.pause();
+                       // mPlayer.seekToPosition(7000);
+                        //mPlayer.resume();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                nextSong();
+                            }
+                        },7000);
+                    }
+                }.start();
+            }
+        });
+    }
+
+    public void nextSong(){
+        if (songNumber < numberOfSongs-1){
             mPlayer.skipToNext();
             timeLeftOfSong = standartTime;
-            timesStarted = 1;
             startTime = System.currentTimeMillis();
             songNumber ++;
             //TODO: Fix so it doesn't crash here
             writeSongsToScreen();
             //PlayActivity.this.runOnUiThread();
             Log.d("NEXT SONG", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
-            createTimer();
+            startCountDown();
+            betweenSongs = false;
         }
     }
 
@@ -178,21 +221,10 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 if(songNumber < numberOfSongs){
                     currentSong = playlist.getList().get(songNumber).getName();
                     textView.setText("current: " + currentSong);
+                    songsLeftText.setText("Shots left: " + (numberOfSongs - songNumber));
                 }
             }
         });
-    }
-    
-    public void createTimer() {
-        final int hold = timesStarted;
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                nextSong(hold);
-                Log.d("Thread", "Done with timer, times started: " + hold);
-            }
-        }, timeLeftOfSong);
     }
 
     @Override

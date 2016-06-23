@@ -147,11 +147,11 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-            llp.setMargins(0,22,0,22);
+            llp.setMargins(0,0,0,0);
             view.setLayoutParams(llp);
             view.setTextSize(20);
             view.setTextColor(Color.WHITE);
-            view.setPadding(22,22,22,22);
+            view.setPadding(22,0,22,0);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -169,12 +169,12 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             LinearLayout.LayoutParams arrllp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-            arrllp.setMargins(0,22,0,22);
+            arrllp.setMargins(0,0,0,0);
             arrow.setLayoutParams(arrllp);
             arrow.setTextSize(20);
             arrow.setTextColor(Color.WHITE);
             arrow.setGravity(Gravity.RIGHT);
-            arrow.setPadding(22,22,22,22);
+            arrow.setPadding(22,0,22,0);
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -191,10 +191,10 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
             layoutRow.addView(layoutPlaylist);
             ImageView line = new ImageView(this);
-            line.setImageResource(R.drawable.line);
+            line.setImageResource(R.mipmap.line);
             LinearLayout.LayoutParams imagellp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT);
+                    100);
 
             line.setLayoutParams(imagellp);
             line.setScaleType(ImageView.ScaleType.CENTER_CROP);

@@ -38,8 +38,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:id="@+id/layoutPlaylist">
+            android:id="@+id/layoutRow">
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/layoutPlaylist"
+                android:weightSum="1">
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

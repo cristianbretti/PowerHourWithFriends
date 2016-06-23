@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -53,15 +54,14 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
     private TextView textViewUser;
     private String token;
     private User user;
-    private LinearLayout layoutPlaylist;
+    private LinearLayout layoutRow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         textViewUser = (TextView) findViewById(R.id.textViewUser);
-        layoutPlaylist = (LinearLayout) findViewById(R.id.layoutPlaylist);
-        layoutPlaylist.setGravity(Gravity.LEFT);
+        layoutRow = (LinearLayout) findViewById(R.id.layoutRow);
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
@@ -135,12 +135,15 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
     private void populateSrollView(){
         ArrayList<Playlist> list = user.getListOfPlaylists();
         for(int i = 0; i < list.size(); i++){
+            LinearLayout layoutPlaylist =  new LinearLayout(this);
+            layoutPlaylist.setOrientation(LinearLayout.HORIZONTAL);
+
             String nameOfPlaylist = list.get(i).getName();
             final TextView view = new TextView(this);
             view.setId(i);
             view.setText(nameOfPlaylist);
             //Set the correct layout
-            RelativeLayout.LayoutParams llp = new RelativeLayout.LayoutParams(
+            LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             llp.setMargins(0,22,0,22);
@@ -159,8 +162,33 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     startActivity(intent);
                 }
             });
-            layoutPlaylist.addView(view);
+            final TextView arrow = new TextView(this);
+            arrow.setId(i);
+            arrow.setText(">");
+            LinearLayout.LayoutParams arrllp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            arrllp.setMargins(0,22,0,22);
+            arrow.setLayoutParams(arrllp);
+            arrow.setTextSize(20);
+            arrow.setTextColor(Color.WHITE);
+            arrow.setGravity(Gravity.RIGHT);
+            arrow.setPadding(22,22,22,22);
+            arrow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(LoginActivity.this, PlayActivity.class);
 
+                    int id = arrow.getId();
+                    intent.putExtra("user", user);
+                    intent.putExtra("id", id);
+                    startActivity(intent);
+                }
+            });
+            layoutPlaylist.addView(view);
+            layoutPlaylist.addView(arrow);
+
+            layoutRow.addView(layoutPlaylist);
         }
     }
 }

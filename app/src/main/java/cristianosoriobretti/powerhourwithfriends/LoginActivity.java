@@ -186,8 +186,15 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     startActivity(intent);
                 }
             });
+            if (i == 0) {
+                view.setPadding(22,50,22,0);
+                arrow.setPadding(22,50,22,0);
+            }
             layoutPlaylist.addView(view);
             layoutPlaylist.addView(arrow);
+
+
+
 
             layoutRow.addView(layoutPlaylist);
             ImageView line = new ImageView(this);

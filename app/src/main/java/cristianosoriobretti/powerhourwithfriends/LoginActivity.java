@@ -88,7 +88,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     token = response.getAccessToken();
                     JsonHandler handler = new JsonHandler();
                     user = handler.createUser(token);
-                    textViewUser.setText(user.getUserName());
+                    textViewUser.setText(user.getUserName() + " Playlists");
                     populateSrollView();
                     break;
 
@@ -145,7 +145,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             llp.setMargins(0,22,0,22);
             view.setLayoutParams(llp);
-            view.setTextSize(30);
+            view.setTextSize(20);
             view.setTextColor(Color.WHITE);
             view.setPadding(22,22,22,22);
             view.setOnClickListener(new View.OnClickListener() {

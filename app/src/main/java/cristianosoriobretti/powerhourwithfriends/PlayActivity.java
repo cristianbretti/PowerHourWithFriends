@@ -17,6 +17,7 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,6 +27,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     private Player mPlayer;
     private User user;
     private Playlist playlist;
+    private ArrayList<String> listOfSongNamesAndArtist;
 
     TextView textView;
     TextView songsLeftText;
@@ -43,8 +45,8 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     String currentSong;
     int songNumber;
 
-    int numberOfSongs = 5;
-    final int standartTime = 10000;
+    final int numberOfSongs = 60;
+    final int standartTime = 20000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         setContentView(R.layout.activity_play);
         timer = new Timer();
         vib = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
+        listOfSongNamesAndArtist = new ArrayList<>();
 
         timeLeftOfSong = standartTime; //Time in millisecond
 
@@ -70,7 +73,9 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
-
+        if(eventType.equals(EventType.PLAY)){
+            Log.d("PlayBack", "TIme is: " + System.currentTimeMillis());
+        }
     }
 
     @Override
@@ -90,7 +95,9 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 //mPlayer.play(playlist.getList().get(0).getUri());
                 for(int j = 0; j < numberOfSongs;){
                     for (int i = 0; i < playlist.getList().size() && j < numberOfSongs; i++){
-                        mPlayer.queue(playlist.getList().get(i).getUri());
+                        Track currentTrack = playlist.getList().get(i);
+                        mPlayer.queue(currentTrack.getUri());
+                        listOfSongNamesAndArtist.add(currentTrack.getName() + " by " + currentTrack.getArtist());
                         mPlayer.queue("spotify:track:3FS2e59gXFXrcg7sN2mL5z");
                         j++;
                     }
@@ -163,6 +170,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         if(paused){
             paused = false;
             mPlayer.resume();
+            Log.d("Play", "HELLO" + System.currentTimeMillis());
             startTime = System.currentTimeMillis();
             Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
             startCountDown();
@@ -226,9 +234,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             public void run() {
 
                 if(songNumber < numberOfSongs){
-                    currentSong = playlist.getList().get(songNumber).getName();
-                    String artist = playlist.getList().get(songNumber).getArtist();
-                    textView.setText("Now playing: " + currentSong + " by " + artist);
+                    textView.setText(listOfSongNamesAndArtist.get(songNumber));
                     songsLeftText.setText("Shots left: " + (numberOfSongs - songNumber));
                 }
             }

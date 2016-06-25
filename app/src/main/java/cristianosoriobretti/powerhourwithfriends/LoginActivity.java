@@ -1,49 +1,21 @@
 package cristianosoriobretti.powerhourwithfriends;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.LayoutDirection;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerNotificationCallback;
-import com.spotify.sdk.android.player.PlayerState;
-
-import org.w3c.dom.Text;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class LoginActivity extends Activity implements ConnectionStateCallback {
@@ -70,6 +42,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
         builder.setScopes(new String[]{"user-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
 
+
         AuthenticationClient.openLoginInBrowser(this, request);
 
     }
@@ -90,7 +63,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     JsonHandler handler = new JsonHandler();
                     user = handler.createUser(token);
                     textViewUser.setText(user.getUserName() + " Playlists");
-                    populateSrollView();
+                    populateScrollView();
                     break;
 
                 // Auth flow returned an error
@@ -133,7 +106,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
     }
 
-    private void populateSrollView(){
+    private void populateScrollView(){
         ArrayList<Playlist> list = user.getListOfPlaylists();
         for(int i = 0; i < list.size(); i++){
             LinearLayout layoutPlaylist =  new LinearLayout(this);

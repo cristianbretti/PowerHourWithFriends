@@ -134,6 +134,7 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                     intent.putExtra("user", user);
                     intent.putExtra("id", id);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 }
             });
             final TextView arrow = new TextView(this);

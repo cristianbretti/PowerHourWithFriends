@@ -1,6 +1,8 @@
 package cristianosoriobretti.powerhourwithfriends;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -54,14 +56,10 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     boolean betweenSongs;
 
     Vibrator vib;
-
-    String currentSong;
     int songNumber;
 
     int numberOfSongs = 60;
     final int standartTime = 20000;
-    PopupWindow pw;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,31 +82,45 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         int i = intent.getIntExtra("id", 0);
         playlist = user.getListOfPlaylists().get(i);
 
+        playMusic();
 
-        findViewById(R.id.play_activity).post(new Runnable() {
+        promptUserForGameLength();
+    }
+
+    private void promptUserForGameLength() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose length of the game");
+        CharSequence[] choices = {"60", "100", "Fuck me up fam"};
+        builder.setSingleChoiceItems(choices, 0, new DialogInterface.OnClickListener() {
             @Override
-            public void run() {
-                createPopUp();
-                playMusic();
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        numberOfSongs = 60;
+                        break;
+                    case 1:
+                        numberOfSongs = 100;
+                        break;
+                    case 2:
+                        numberOfSongs = playlist.getList().size();
+                        break;
+                    default:
+                        numberOfSongs = 60;
+                        break;
+                }
             }
         });
-
-
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                writeSongsToScreen();
+                return;
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
-    private void createPopUp() {
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.popup, null);
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-
-        pw = new PopupWindow(layout,(int)(width*.8), (int)(height*.55), false);
-        pw.showAtLocation(findViewById(R.id.play_activity), Gravity.CENTER, 0,0);
-        pw.update();
-    }
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState) {
@@ -255,9 +267,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             timeLeftOfSong = standartTime;
             startTime = System.currentTimeMillis();
             songNumber ++;
-            //TODO: Fix so it doesn't crash here
             writeSongsToScreen();
-            //PlayActivity.this.runOnUiThread();
             Log.d("NEXT SONG", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
             startCountDown();
             betweenSongs = false;
@@ -276,21 +286,6 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                 }
             }
         });
-    }
-    public void listSizeClick(View v) {
-        numberOfSongs = playlist.getList().size();
-        pw.dismiss();
-        writeSongsToScreen();
-    }
-    public void sixtyClick(View v) {
-        numberOfSongs = 60;
-        pw.dismiss();
-        writeSongsToScreen();
-    }
-    public void hundredClick(View v) {
-        numberOfSongs = 100;
-        pw.dismiss();
-        writeSongsToScreen();
     }
 
 }

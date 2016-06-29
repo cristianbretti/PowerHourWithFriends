@@ -1,6 +1,8 @@
 package cristianosoriobretti.powerhourwithfriends;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -128,13 +130,19 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(LoginActivity.this, PlayActivity.class);
-
                     int id = view.getId();
-                    intent.putExtra("user", user);
-                    intent.putExtra("id", id);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    if (user.getListOfPlaylists().get(id).getList().size() > 0 ) {
+                        Intent intent = new Intent(LoginActivity.this, PlayActivity.class);
+
+
+                        intent.putExtra("user", user);
+                        intent.putExtra("id", id);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    } else {
+                        //TODO: dialog
+                        emptyListDialog();
+                    }
                 }
             });
             final TextView arrow = new TextView(this);
@@ -152,12 +160,16 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(LoginActivity.this, PlayActivity.class);
-
                     int id = arrow.getId();
-                    intent.putExtra("user", user);
-                    intent.putExtra("id", id);
-                    startActivity(intent);
+                    if (user.getListOfPlaylists().get(id).getList().size() > 0 ) {
+                        Intent intent = new Intent(LoginActivity.this, PlayActivity.class);
+                        intent.putExtra("user", user);
+                        intent.putExtra("id", id);
+                        startActivity(intent);
+                    } else {
+                        //TODO: dialog
+                        emptyListDialog();
+                    }
                 }
             });
             if (i == 0) {
@@ -181,5 +193,19 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
             line.setScaleType(ImageView.ScaleType.CENTER_CROP);
             layoutRow.addView(line);
         }
+    }
+
+    private void emptyListDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Empty playlist");
+        builder.setMessage("This playlist does not contain any songs!");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

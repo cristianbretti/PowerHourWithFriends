@@ -140,7 +140,6 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                         startActivity(intent);
                         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     } else {
-                        //TODO: dialog
                         emptyListDialog();
                     }
                 }
@@ -167,7 +166,6 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                         intent.putExtra("id", id);
                         startActivity(intent);
                     } else {
-                        //TODO: dialog
                         emptyListDialog();
                     }
                 }

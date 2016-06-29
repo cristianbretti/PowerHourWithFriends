@@ -4,24 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.player.Config;
@@ -34,7 +23,6 @@ import com.spotify.sdk.android.player.Spotify;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.zip.Inflater;
 
 public class PlayActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback{
 
@@ -44,7 +32,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     private Playlist playlist;
     private ArrayList<String> listOfSongNamesAndArtist;
 
-    TextView textView;
+    TextView currentSongText;
     TextView songsLeftText;
     TextView countDownText;
 
@@ -73,7 +61,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
         timeLeftOfSong = standartTime; //Time in millisecond
 
-        textView = (TextView) findViewById(R.id.textView);
+        currentSongText = (TextView) findViewById(R.id.currentSongText);
         songsLeftText = (TextView) findViewById(R.id.songLeftText);
         countDownText = (TextView) findViewById(R.id.countDownText);
 
@@ -281,11 +269,30 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             public void run() {
 
                 if(songNumber < numberOfSongs){
-                    textView.setText(listOfSongNamesAndArtist.get(songNumber));
+                    currentSongText.setText(listOfSongNamesAndArtist.get(songNumber));
                     songsLeftText.setText("Shots left: " + (numberOfSongs - songNumber));
                 }
             }
         });
     }
 
+    public void backToPlayLists(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure?");
+        builder.setMessage("No progress will be saved, and you will have to start over.");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                PlayActivity.super.onBackPressed();
+            }
+        });
+        builder.setNegativeButton("No", null);
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        backToPlayLists(new View(this));
+    }
 }

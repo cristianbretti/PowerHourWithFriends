@@ -15,13 +15,19 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/textView"
+            android:id="@+id/currentSongText"
             android:layout_marginTop="60dp"
             android:textSize="30dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -66,5 +72,16 @@
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:textColor="#ffffff" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@mipmap/back_arrow"
+            android:onClick="backToPlayLists" />
+
     </RelativeLayout>
 </RelativeLayout>

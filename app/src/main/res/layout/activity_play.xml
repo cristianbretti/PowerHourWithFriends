@@ -16,7 +16,7 @@
             android:layout_width="900dp"
             android:layout_height="wrap_content"
             android:id="@+id/currentSongText"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="80dp"
             android:textSize="30dp"
             android:layout_alignParentLeft="false"
             android:layout_alignParentStart="false"

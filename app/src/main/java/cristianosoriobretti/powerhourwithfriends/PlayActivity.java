@@ -52,7 +52,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     TextView textTest;
 
     int numberOfSongs = 60;
-    final int standartTime = 20000;
+    final int standartTime = 10000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,20 +237,22 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
                     @Override
                     public void onFinish() {
-                        countDownText.setText("Shot!");
-                        betweenSongs = true;
-                        vib.vibrate(3000);
-                        mPlayer.skipToNext();
-                        //TODO: Start song after x seconds
-                       // mPlayer.pause();
-                       // mPlayer.seekToPosition(7000);
-                        //mPlayer.resume();
-                        timer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                nextSong();
-                            }
-                        },7000);
+
+                            countDownText.setText("Shot!");
+                            betweenSongs = true;
+                            vib.vibrate(3000);
+                            mPlayer.skipToNext();
+                            //TODO: Start song after x seconds
+                            // mPlayer.pause();
+                            // mPlayer.seekToPosition(7000);
+                            //mPlayer.resume();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    nextSong();
+                                }
+                            }, 7000);
+
                     }
                 }.start();
             }
@@ -285,6 +287,9 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     }
 
     public void backToPlayLists(View v){
+        if (countdown != null){
+           countdown.cancel();
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Are you sure?");
         builder.setMessage("No progress will be saved, and you will have to start over.");

@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -33,7 +34,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.Inflater;
 
-public class PlayActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback, Runnable{
+public class PlayActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback{
 
     private static final String CLIENT_ID = "dc83b9c7f6ab47c299c90a43edc62d18";
     private Player mPlayer;
@@ -57,14 +58,16 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     String currentSong;
     int songNumber;
 
-    final int numberOfSongs = 60;
+    int numberOfSongs = 60;
     final int standartTime = 20000;
     PopupWindow pw;
-    Button popBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
         setContentView(R.layout.activity_play);
         timer = new Timer();
         vib = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
@@ -81,13 +84,15 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         int i = intent.getIntExtra("id", 0);
         playlist = user.getListOfPlaylists().get(i);
 
-        playMusic();
+
         findViewById(R.id.play_activity).post(new Runnable() {
             @Override
             public void run() {
                 createPopUp();
+                playMusic();
             }
         });
+
 
     }
 
@@ -103,14 +108,6 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         pw = new PopupWindow(layout,(int)(width*.8), (int)(height*.55), false);
         pw.showAtLocation(findViewById(R.id.play_activity), Gravity.CENTER, 0,0);
         pw.update();
-        popBtn = (Button) layout.findViewById(R.id.button);
-        popBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Click", "close btn");
-                pw.dismiss();
-            }
-        });
     }
 
     @Override
@@ -150,8 +147,6 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
                 songNumber = 0;
                 paused = true;
-                Log.d("Start time now", "" + startTime);
-                writeSongsToScreen();
             }
 
             @Override
@@ -282,9 +277,20 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             }
         });
     }
-
-    @Override
-    public void run() {
-        //Nothing yet
+    public void listSizeClick(View v) {
+        numberOfSongs = playlist.getList().size();
+        pw.dismiss();
+        writeSongsToScreen();
     }
+    public void sixtyClick(View v) {
+        numberOfSongs = 60;
+        pw.dismiss();
+        writeSongsToScreen();
+    }
+    public void hundredClick(View v) {
+        numberOfSongs = 100;
+        pw.dismiss();
+        writeSongsToScreen();
+    }
+
 }

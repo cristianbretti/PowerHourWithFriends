@@ -4,13 +4,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.player.Config;
@@ -45,6 +49,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
     Vibrator vib;
     int songNumber;
+    TextView textTest;
 
     int numberOfSongs = 60;
     final int standartTime = 20000;
@@ -65,6 +70,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         songsLeftText = (TextView) findViewById(R.id.songLeftText);
         countDownText = (TextView) findViewById(R.id.countDownText);
 
+
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
         int i = intent.getIntExtra("id", 0);
@@ -73,6 +79,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         playMusic();
 
         promptUserForGameLength();
+
     }
 
     private void promptUserForGameLength() {
@@ -225,6 +232,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                     @Override
                     public void onTick(long millisUntilFinished) {
                         countDownText.setText("" + millisUntilFinished/1000);
+
                     }
 
                     @Override

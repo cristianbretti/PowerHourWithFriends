@@ -2,12 +2,23 @@ package cristianosoriobretti.powerhourwithfriends;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.player.Config;
@@ -20,6 +31,7 @@ import com.spotify.sdk.android.player.Spotify;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.Inflater;
 
 public class PlayActivity extends AppCompatActivity implements PlayerNotificationCallback, ConnectionStateCallback, Runnable{
 
@@ -47,6 +59,8 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
     final int numberOfSongs = 60;
     final int standartTime = 20000;
+    PopupWindow pw;
+    Button popBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +82,35 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         playlist = user.getListOfPlaylists().get(i);
 
         playMusic();
+        findViewById(R.id.play_activity).post(new Runnable() {
+            @Override
+            public void run() {
+                createPopUp();
+            }
+        });
 
+    }
+
+    private void createPopUp() {
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.popup, null);
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+
+        pw = new PopupWindow(layout,(int)(width*.8), (int)(height*.55), false);
+        pw.showAtLocation(findViewById(R.id.play_activity), Gravity.CENTER, 0,0);
+        pw.update();
+        popBtn = (Button) layout.findViewById(R.id.button);
+        popBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("Click", "close btn");
+                pw.dismiss();
+            }
+        });
     }
 
     @Override
@@ -103,7 +145,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
                     }
                 }
 
-                Log.d("Player", "Added all to queueu");
+                Log.d("Player", "Added all to queue");
                 mPlayer.pause();
 
                 songNumber = 0;

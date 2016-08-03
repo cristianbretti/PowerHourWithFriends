@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class PlaylistActivity extends Activity {
+public class PlaylistActivity extends AppCompatActivity {
 
 
 
@@ -146,7 +147,9 @@ public class PlaylistActivity extends Activity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                createLogoutWebView();
+                Intent logoutIntent = new Intent(PlaylistActivity.this, LoginActivity.class);
+                logoutIntent.putExtra("f", 1);
+                startActivity(logoutIntent);
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -159,17 +162,5 @@ public class PlaylistActivity extends Activity {
         alert.show();
     }
 
-    private void createLogoutWebView() {
-        String urlString="https://accounts.spotify.com";
-        Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(urlString));
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setPackage("com.android.chrome");
-        try {
-            this.startActivity(intent);
-        } catch (ActivityNotFoundException ex) {
-            // Chrome browser presumably not installed so allow user to choose instead
-            intent.setPackage(null);
-            this.startActivity(intent);
-        }
-    }
+
 }

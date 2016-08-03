@@ -1,6 +1,7 @@
 package cristianosoriobretti.powerhourwithfriends;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +24,6 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
-
     }
 
     @Override
@@ -57,6 +57,14 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
                 default:
                     // Handle other cases
                     Log.d("App", "default");
+            }
+        }
+        else {
+            if(intent != null){
+                int logoutFlag = intent.getIntExtra("f", 0);
+                if(logoutFlag == 1){
+                    createLogoutBrowser();
+                }
             }
         }
     }
@@ -97,5 +105,19 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
 
 
         AuthenticationClient.openLoginInBrowser(this, request);
+    }
+
+    private void createLogoutBrowser() {
+        String urlString="https://accounts.spotify.com";
+        Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(urlString));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage("com.android.chrome");
+        try {
+            this.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            // Chrome browser presumably not installed so allow user to choose instead
+            intent.setPackage(null);
+            this.startActivity(intent);
+        }
     }
 }

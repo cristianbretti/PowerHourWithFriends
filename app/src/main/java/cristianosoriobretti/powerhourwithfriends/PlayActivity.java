@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
     TextView currentSongText;
     TextView songsLeftText;
     TextView countDownText;
+    Button playPauseBtn;
 
     CountDownTimer countdown;
     Timer timer;
@@ -69,13 +71,13 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         currentSongText = (TextView) findViewById(R.id.currentSongText);
         songsLeftText = (TextView) findViewById(R.id.songLeftText);
         countDownText = (TextView) findViewById(R.id.countDownText);
+        playPauseBtn = (Button) findViewById(R.id.playPauseButton);
 
 
         Intent intent = getIntent();
         user = (User) intent.getParcelableExtra("user");
         int i = intent.getIntExtra("id", 0);
         playlist = user.getListOfPlaylists().get(i);
-
         playMusic();
 
         promptUserForGameLength();
@@ -197,7 +199,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
         Log.d("Player", "player destroyed");
     }
 
-    public void pauseClick (View view){
+    public void pauseClick (){
         if(!paused && !betweenSongs){
             paused = true;
             long elapsedTime = System.currentTimeMillis() - startTime;
@@ -205,7 +207,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             mPlayer.pause();
 
             countdown.cancel();
-
+            playPauseBtn.setText("Play");
             Log.d("PAUSE", "Elapsed time before pause: " + elapsedTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
         }
     }
@@ -218,6 +220,9 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             startTime = System.currentTimeMillis();
             Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
             startCountDown();
+            playPauseBtn.setText("Pause");
+        } else {
+            pauseClick();
         }
     }
 

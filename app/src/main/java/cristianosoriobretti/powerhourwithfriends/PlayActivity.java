@@ -208,6 +208,8 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
 
             countdown.cancel();
             playPauseBtn.setText("Play");
+            playPauseBtn.setBackgroundColor(Color.rgb(2,180,197));
+
             Log.d("PAUSE", "Elapsed time before pause: " + elapsedTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
         }
     }
@@ -221,6 +223,7 @@ public class PlayActivity extends AppCompatActivity implements PlayerNotificatio
             Log.d("PLAY", "Start time: " + startTime/1000 + "s\n" + "Time Left of Song: " + timeLeftOfSong/1000 + "s");
             startCountDown();
             playPauseBtn.setText("Pause");
+            playPauseBtn.setBackgroundColor(Color.rgb(255,133,0));
         } else {
             pauseClick();
         }

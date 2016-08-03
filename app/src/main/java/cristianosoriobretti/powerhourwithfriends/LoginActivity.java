@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -13,7 +15,7 @@ import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
 
-public class LoginActivity extends Activity implements ConnectionStateCallback {
+public class LoginActivity extends AppCompatActivity implements ConnectionStateCallback {
 
     private static final String CLIENT_ID = "dc83b9c7f6ab47c299c90a43edc62d18";
     private static final String REDIRECT_URI = "power-hour-with-friends-login://callback";
@@ -23,6 +25,9 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
+
         setContentView(R.layout.activity_first);
     }
 

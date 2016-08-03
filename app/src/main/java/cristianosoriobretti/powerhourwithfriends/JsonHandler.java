@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,8 +45,12 @@ public class JsonHandler {
                 JSONObject current = listOfPlaylistObjects.getJSONObject(i);
                 String playlistName = current.getString("name");
                 String playlistID = current.getString("id");
+                Log.d("PlaylistID: ", playlistID);
                 //Get the info from the current playlist
                 String playlistJSON = getPlaylistJSONString(oAuthCode, userID, playlistID);
+                if(playlistJSON == null){
+                    continue;
+                }
                 JSONObject jsonPlaylist = new JSONObject(playlistJSON);
                 JSONArray listOfTrackObjects = jsonPlaylist.getJSONArray("items");
                 ArrayList<Track> listOfTracks = new ArrayList<>();
@@ -79,10 +84,13 @@ public class JsonHandler {
     private String getPlaylistJSONString(String oAuthCode, String userID, String playlistID){
         try {
             String url = playlistsURL + userID + "/playlists/" + playlistID + "/tracks";
+            Log.d("oAuthCode", oAuthCode);
             return new JSONTask().execute(url, oAuthCode).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Log.d("Exception", "DÄR");
         } catch (ExecutionException e) {
+            Log.d("Exception", "HÄR");
             e.printStackTrace();
         }
         return "Funkar EJ";
@@ -129,6 +137,9 @@ public class JsonHandler {
                 InputStream stream = connection.getInputStream();
 
                 Log.d("Strem", stream.toString());
+                if(res.toString().equals("404")){
+                    return null;
+                }
                 reader = new BufferedReader(new InputStreamReader(stream));
 
                 StringBuffer buffer = new StringBuffer();
@@ -142,6 +153,7 @@ public class JsonHandler {
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+
                 e.printStackTrace();
             } finally {
                 if (connection != null) {
@@ -161,7 +173,7 @@ public class JsonHandler {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.d("RESULT FROM ONPOSTE: ", result);
+            Log.d("RESULT FROM ONPOSTE: ", "" + result);
         }
     }
 }

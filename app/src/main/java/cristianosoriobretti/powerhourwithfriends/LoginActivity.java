@@ -2,6 +2,7 @@ package cristianosoriobretti.powerhourwithfriends;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -10,8 +11,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -30,13 +34,14 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
     private String token;
     private User user;
     private LinearLayout layoutRow;
-
+    private RelativeLayout relView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         textViewUser = (TextView) findViewById(R.id.textViewUser);
         layoutRow = (LinearLayout) findViewById(R.id.layoutRow);
+        relView = (RelativeLayout) findViewById(R.id.mainView);
 
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
@@ -205,5 +210,39 @@ public class LoginActivity extends Activity implements ConnectionStateCallback {
         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void logout(View v){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Logout");
+        builder.setMessage("Are you sure you want to logout?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                createLogoutWebView();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void createLogoutWebView() {
+        String urlString="https://accounts.spotify.com";
+        Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(urlString));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setPackage("com.android.chrome");
+        try {
+            this.startActivity(intent);
+        } catch (ActivityNotFoundException ex) {
+            // Chrome browser presumably not installed so allow user to choose instead
+            intent.setPackage(null);
+            this.startActivity(intent);
+        }
     }
 }

@@ -30,22 +30,11 @@
             android:layout_alignWithParentIfMissing="false" />
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pause"
-            android:id="@+id/pauseButton"
-            android:onClick="pauseClick"
-            android:background="#23cb71"
-            android:layout_alignParentBottom="true"
-            android:layout_toLeftOf="@+id/playButton"
-            android:layout_toStartOf="@+id/playButton" />
-
-        <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Play"
-            android:id="@+id/playButton"
+            android:id="@+id/playPauseButton"
             android:onClick="playClick"
             android:layout_alignParentBottom="true"
             android:layout_alignLeft="@+id/songLeftText"

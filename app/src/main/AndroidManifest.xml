@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".FirstActivity"
+            android:name=".LoginActivity"
             android:launchMode="singleInstance">
             // An intent filter that will receive the response
             // from the authentication service
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PlayActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".PlaylistActivity"></activity>
     </application>
 
 </manifest>
